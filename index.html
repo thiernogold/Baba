@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grand Livre — Gestion de stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">GL</span>
+      <div class="brand-text">
+        <strong>Grand Livre</strong>
+        <small>Gestion de stock</small>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 13h6V4H4v9zm0 7h6v-5H4v5zm10 0h6V11h-6v9zm0-16v5h6V4h-6z" fill="currentColor"/></svg>
+        <span>Tableau de bord</span>
+      </button>
+      <button class="nav-item" data-view="products">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 7l1.5-3h15L21 7M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18M9 11a3 3 0 006 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Produits</span>
+      </button>
+      <button class="nav-item" data-view="sales">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V10M10 19V5M16 19v-7M20 19V8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>Ventes</span>
+      </button>
+    </nav>
+
+    <button class="settings-btn" id="openSettings">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" stroke="currentColor" stroke-width="1.5"/><path d="M19.4 13a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V19a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H4a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H10a1.65 1.65 0 001-1.51V4a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V10c.63.24 1.13.7 1.51 1H20a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.5"/></svg>
+      <span>Paramètres</span>
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1 id="viewTitle">Tableau de bord</h1>
+        <p id="viewSubtitle">Vue d'ensemble de votre activité</p>
+      </div>
+      <div class="clock">
+        <span id="clockDate"></span>
+        <span id="clockTime"></span>
+      </div>
+    </header>
+
+    <!-- DASHBOARD VIEW -->
+    <section class="view active" id="view-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Produits en stock</span>
+          <span class="stat-value" id="statProductCount">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Valeur du stock (achat)</span>
+          <span class="stat-value" id="statStockValue">0 €</span>
+        </div>
+        <div class="stat-card accent">
+          <span class="stat-label">Ventes aujourd'hui</span>
+          <span class="stat-value" id="statTodaySales">0 €</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Ventes ce mois-ci</span>
+          <span class="stat-value" id="statMonthSales">0 €</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Stock faible</h2>
+          <small>Produits à 5 unités ou moins</small>
+        </div>
+        <div id="lowStockList" class="low-stock-list"></div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS VIEW -->
+    <section class="view" id="view-products">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input type="text" id="searchInput" placeholder="Rechercher un produit disponible…">
+        </div>
+        <button class="btn btn-primary" id="openAddProduct">+ Ajouter un produit</button>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
+      <div class="empty-state" id="productsEmpty" hidden>
+        <p>Aucun produit pour le moment.</p>
+        <span>Cliquez sur « Ajouter un produit » pour commencer votre inventaire.</span>
+      </div>
+    </section>
+
+    <!-- SALES VIEW -->
+    <section class="view" id="view-sales">
+      <div class="sales-controls">
+        <label for="monthSelect">Mois</label>
+        <select id="monthSelect"></select>
+        <div class="sales-mini-stats">
+          <div><small>Total du mois</small><strong id="monthTotal">0 €</strong></div>
+          <div><small>Bénéfice du mois</small><strong id="monthProfit">0 €</strong></div>
+          <div><small>Articles vendus</small><strong id="monthUnits">0</strong></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Détail par jour</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Ventes</th><th>Articles</th><th>Chiffre d'affaires</th><th>Bénéfice</th></tr>
+            </thead>
+            <tbody id="dailySalesBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="salesEmpty" hidden>
+          <p>Aucune vente enregistrée pour ce mois.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- PIN MODAL (generic gate) -->
+<div class="modal-backdrop" id="pinModal" hidden>
+  <div class="modal modal-sm">
+    <h3 id="pinModalTitle">Code confidentiel requis</h3>
+    <p class="modal-hint">Saisissez le code à 4 chiffres pour continuer.</p>
+    <input type="password" inputmode="numeric" maxlength="12" id="pinInput" class="pin-input" placeholder="••••" autocomplete="off">
+    <p class="modal-error" id="pinError" hidden>Code incorrect. Réessayez.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="pinCancel">Annuler</button>
+      <button class="btn btn-primary" id="pinConfirm">Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD / EDIT PRODUCT MODAL -->
+<div class="modal-backdrop" id="productModal" hidden>
+  <div class="modal">
+    <h3 id="productModalTitle">Ajouter un produit</h3>
+    <form id="productForm">
+      <label>Nom du produit
+        <input type="text" id="pName" required placeholder="Ex. Casque audio sans fil">
+      </label>
+      <div class="form-row">
+        <label>Prix d'achat (€)
+          <input type="number" id="pBuy" min="0" step="0.01" required placeholder="0.00">
+        </label>
+        <label>Prix de vente (€)
+          <input type="number" id="pSell" min="0" step="0.01" required placeholder="0.00">
+        </label>
+      </div>
+      <label>Quantité disponible
+        <input type="number" id="pQty" min="0" step="1" required placeholder="0">
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="deleteProductBtn" hidden>Supprimer</button>
+        <button type="button" class="btn btn-ghost" id="productCancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="productSubmitBtn">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SELL MODAL -->
+<div class="modal-backdrop" id="sellModal" hidden>
+  <div class="modal modal-sm">
+    <h3>Vendre <span id="sellProductName"></span></h3>
+    <p class="modal-hint"><span id="sellAvailable"></span> unité(s) disponible(s) · <span id="sellPrice"></span> / unité</p>
+    <label>Quantité vendue
+      <input type="number" id="sellQty" min="1" value="1" class="pin-input">
+    </label>
+    <p class="modal-error" id="sellError" hidden>Quantité invalide.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="sellCancel">Annuler</button>
+      <button class="btn btn-primary" id="sellConfirm">Confirmer la vente</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsModal" hidden>
+  <div class="modal modal-sm">
+    <h3>Changer le code confidentiel</h3>
+    <label>Nouveau code (4 à 12 chiffres)
+      <input type="password" inputmode="numeric" id="newPin" class="pin-input" placeholder="••••">
+    </label>
+    <label>Confirmer le nouveau code
+      <input type="password" inputmode="numeric" id="newPinConfirm" class="pin-input" placeholder="••••">
+    </label>
+    <p class="modal-error" id="settingsError" hidden></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="settingsCancel">Annuler</button>
+      <button class="btn btn-primary" id="settingsConfirm">Mettre à jour</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
